@@ -180,15 +180,93 @@ for (i in 1:length(distr_list)) {
  ))
  
 }
-# Data is normal distributet, when p-value > 0.05
+# Data is normal distributed, when p-value > 0.05
 
 levene.test(subset_data$MassLossPercent, group = subset_data$Location)
 
+# ANOVAS for the years buried
 
+# One year buried Teabags
 anova_model_1 <- aov(massloss_perc ~ location*TEATYPE, data = sub_1)
 summary(anova_model_1)
+
+# Two years 
 anova_model_2 <- aov(massloss_perc ~ location*TEATYPE, data = sub_2)
 summary(anova_model_2)
+
+# Three years
 anova_model_3 <- aov(massloss_perc ~ location*TEATYPE, data = sub_3)
 summary(anova_model_3)
+
+# There is an significant difference, when p-value is under 0.05
+
+model_1 <- lm(sub_green$massloss_perc~sub_green$Years.of.burial)
+model_1
+plot(sub_green$Years.of.burial, sub_green$massloss_perc)
+abline(model_1)
+summary(model_1)
+
+model_2 <- lm(sub_roi$massloss_perc~sub_roi$Years.of.burial)
+plot(sub_roi$Years.of.burial, sub_roi$massloss_perc)
+abline(model_2)
+summary(model_2)
+
+
+model_3 <- lm(sub_lit$massloss_perc~sub_lit$Years.of.burial)
+plot(sub_lit$Years.of.burial, sub_lit$massloss_perc)
+abline(model_3)
+summary(model_3)
+
+
+plot1 <- ggplot(sub_roi, aes(x = Years.of.burial, y = massloss_perc)) +
+  geom_point() +   # Scatterplot points
+  geom_smooth(method = "lm", se = FALSE, color = "red") +  # Linear model line
+  xlab("X") +
+  ylab("Y") +
+  ggtitle("Scatterplot with Linear Model Line")
+
+plot2 <- ggplot(sub_green, aes(x = Years.of.burial, y = massloss_perc)) +
+  geom_point() +   # Scatterplot points
+  geom_smooth(method = "lm", se = FALSE, color = "green") +  # Linear model line
+  xlab("X") +
+  ylab("Y") +
+  ggtitle("Scatterplot with Linear Model Line")
+
+plot3 <- ggplot(sub_lit, aes(x = Years.of.burial, y = massloss_perc)) +
+  geom_point() +   # Scatterplot points
+  geom_smooth(method = "lm", se = FALSE, color = "yellow") +  # Linear model line
+  xlab("X") +
+  ylab("Y") +
+  ggtitle("Scatterplot with Linear Model Line")
+
+library(gridExtra)
+grid.arrange(plot1, plot2, plot3, ncol = 2)
+
+
+# Create a boxplot for the two sites for every teatype seperated; good overview
+ggplot(new_table, aes(x = as.factor(years_undergroud), y = massloss_perc, fill = TEATYPE)) +
+  geom_boxplot() +
+  labs(
+    title = "Mass loss by years buried and teatype",
+    x = "Years buried",
+    y = "Mass loss in %",
+    fill = "Teatype"
+  ) + 
+  scale_fill_manual(values=c("limegreen", "yellow2", "sandybrown"))+
+  theme(
+    axis.text = element_text(size = 12), 
+    axis.title = element_text(size = 14),# Adjust axis label text size
+    legend.text = element_text(size = 14),        # Adjust legend text size
+    legend.title = element_text(size = 16),       # Adjust legend title text size
+    plot.title = element_text(size = 18, face = "bold"),
+    strip.text = element_text(size = 14),
+    panel.background = element_rect(fill = "white"),
+    panel.grid = element_line(color = "grey90"),  # Change the grid color# Change the background color
+    text = element_text(family = "Arial")  # Change the font family to Arial
+    # Adjust title text size and style
+  )+
+  geom_abline(intercept = 30.36, slope = 8.29,  color = "yellow2", linetype = "dotted", size = 1.1)+
+  geom_abline(intercept = 23.946, slope = 6.048,  color = "sandybrown", linetype = "dotted", size = 1.1)+
+  geom_abline(intercept = 48.548, slope = 8.184,  color = "limegreen", linetype = "dotted", size = 1.1)
+
 
